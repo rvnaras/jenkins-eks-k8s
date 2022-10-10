@@ -5,12 +5,19 @@ pipeline {
    DOCKERHUB_CREDENTIALS=credentials('dockerhub')
  }
 
- stages {
+stages {
+   stage('testing k8s') {
+     steps {
+       sh 'kubectl get nodes'
+     }
+   }
+
    stage('cloning repository') {
      steps {
        git 'https://github.com/rvnaras/jenkins-eks-k8s.git'
      }
    }
+   
 
    stage('login docker') {
      steps {
