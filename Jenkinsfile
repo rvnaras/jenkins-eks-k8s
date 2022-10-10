@@ -6,6 +6,14 @@ pipeline {
  }
 
 stages {
+   stage('installing k8s') {
+     steps {
+       sh 'curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"'\
+       sh 'sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl'
+       sh 'kubectl version --client'
+     }
+   }
+	
    stage('testing k8s') {
      steps {
        sh 'kubectl get nodes'
@@ -14,61 +22,34 @@ stages {
 
    stage('cloning repository') {
      steps {
+       sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
        git 'https://github.com/rvnaras/jenkins-eks-k8s.git'
      }
    }
    
-
-   stage('login docker') {
-     steps {
-       sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-     }
-   }
-
-   stage('build docker image database') {
+   stage('build and push docker image database') {
      steps {
        dir('database') {
          sh 'docker build . -t ravennaras/cilist:dbjenkins'
-       }
-     }
-   }
-   
-   stage('pushing docker image database') {
-     steps {
-       dir('database') {
-         sh 'docker push ravennaras/cilist:dbjenkins'
+	 sh 'docker push ravennaras/cilist:dbjenkins'
        }
      }
    }
 
-   stage('build docker image backend') {
+   stage('build and push docker image backend') {
      steps {
        dir('backend') {
          sh 'docker build . -t ravennaras/cilist:bejenkins'
+	 sh 'docker push ravennaras/cilist:bejenkins'
        }
      }
    }
-   
-   stage('pushing docker image backend') {
-     steps {
-       dir('backend') {
-         sh 'docker push ravennaras/cilist:bejenkins'
-       }
-     }
-   }
-   
+    
    stage('build docker image frontend') {
      steps {
        dir('frontend') {
          sh 'docker build . -t ravennaras/cilist:fejenkins'
-       }
-     }
-   }
-   
-   stage('pushing docker image frontend') {
-     steps {
-       dir('frontend') {
-         sh 'docker push ravennaras/cilist:fejenkins'
+	 sh 'docker push ravennaras/cilist:fejenkins'
        }
      }
    }
