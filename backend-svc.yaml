@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cilist-be-svc
+  namespace: devops-musyaffadli
+spec:
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ports:
+  - nodePort: 30100
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: cilist
+    tier: backend
+  type: NodePort
+status:
+  loadBalancer: {}

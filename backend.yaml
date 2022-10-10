@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cilist-be
+  namespace: devops-musyaffadli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cilist
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: cilist
+        tier: backend
+    spec:
+      #volumes:
+      #- name: configmap-be
+      #  configMap:
+      #    name: configmap-be
+      containers:
+      - image: ravennaras/cilist:bejenkins
+        name: cilist-be
+        ports:
+        - containerPort: 5000
+        #volumeMounts:
+        #- name: configmap-be
+        #  mountPath: "/"
+        #  subPath: ".env"
+        env:
+        - name: BASE_URL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-be
+              key: BASE_URL_PORT
+        - name: DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-be
+              key: DATABASE_PORT
+        - name: DATABASE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: cilist-secret
+              key: DB_USER
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: cilist-secret
+              key: DB_PASS
+        - name: DATABASE_HOST
+          valueFrom:
+            secretKeyRef:
+              name: cilist-secret
+              key: DB_ENDPOINT
+        - name: DATABASE_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: cilist-secret
+              key: DB_SELECT
+      restartPolicy: Always

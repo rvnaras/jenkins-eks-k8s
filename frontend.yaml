@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cilist-fe
+  namespace: devops-musyaffadli
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cilist
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: cilist
+        tier: frontend
+    spec:
+      #volumes:
+      #- name: configmap-fe
+      #  configMap:
+      #    name: configmap-fe
+      containers:
+      - image: ravennaras/cilist:fejenkins
+        name: cilist-fe
+        ports:
+        - containerPort: 3000
+        #volumeMounts:
+        #- name: configmap-fe
+        #  mountPath: "/app/.env"
+        # subPath: ".env"
+        env:
+        - name: REACT_APP_BACKEND_URL
+          valueFrom:
+            configMapKeyRef:
+              name: configmap-fe
+              key: REACT_APP_BACKEND_URL
+      restartPolicy: Always
