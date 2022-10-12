@@ -49,6 +49,7 @@ pipeline {
     }
     stage('login to aws cluster') {
       steps {
+        sh 'echo login'
       }
     }
   }
