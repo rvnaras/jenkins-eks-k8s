@@ -21,7 +21,7 @@ pipeline {
   stages {
     stage('clone') {
       steps {
-        sh 'echo skipped"
+        sh 'echo skipped'
       }
     }
     stage('test docker') {
