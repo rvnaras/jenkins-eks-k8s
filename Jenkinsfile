@@ -26,7 +26,6 @@ pipeline {
 	  sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
 	  sh 'git clone https://github.com/rvnaras/jenkins-eks-k8s.git'
         }
-      git 'https://github.com/rvnaras/jenkins-eks-k8s.git'
       }
     }
   }
