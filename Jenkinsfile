@@ -15,8 +15,8 @@ pipeline {
     }
   }
   environment{
-    DOCKERHUB_CREDENTIALS=credentials('docker')
-    registry = "ravennaras/cilist"
+    DOCKERHUB_CREDENTIALS=credentials('dockerhub')
+	registry = "ravennaras/cilist"
   }
   stages {
     stage('clone') {
@@ -24,10 +24,12 @@ pipeline {
         sh 'echo skipped'
       }
     }
-    stage('test docker') {
-      steps {
-        sh 'kubectl apply -f backend.yaml'
-      } 
-    }
+	stage('test docker') {
+	  steps {
+	    script {
+		  dockerImage = docker.build registry + ":$BUILD_NUMBER"
+		  }
+	  }
+	}
   }
 }
