@@ -49,7 +49,6 @@ pipeline {
     }
     stage('login to aws cluster') {
       steps {
-        sh 'aws --version'
       }
     }
   }
