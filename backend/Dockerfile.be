@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./backend/ /app
 
-#RUN apt update -y
+#RUN apt update && apt install nano -y
 
 #RUN npm install
 
