@@ -1,50 +1,24 @@
 pipeline {
-
-  environment {
-    dockerimagename = "thetips4you/nodeapp"
-    dockerImage = ""
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:
+          - name: maven
+            image: maven:alpine
+            command:
+            - cat
+            tty: true
+        '''
+    }
   }
-
-  agent any
-
   stages {
-
-    stage('initilize'){
-      def dockerHome = tool 'docker'
-      env.PATH = "${dockerHome}/bin:${env.PATH}"
-    }
-    
-    stage('Checkout Source') {
+    stage('Run maven') {
       steps {
-        git 'https://github.com/shazforiot/nodeapp_test.git'
-      }
-    }
-
-    stage('Build image') {
-      steps{
-        script {
-          dockerImage = docker.build dockerimagename
-        }
-      }
-    }
-
-    stage('Pushing Image') {
-      environment {
-               registryCredential = 'dockerhublogin'
-           }
-      steps{
-        script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("latest")
-          }
-        }
-      }
-    }
-
-    stage('Deploying App to Kubernetes') {
-      steps {
-        script {
-          kubernetesDeploy(configs: "deploymentservice.yml", kubeconfigId: "kubernetes")
+        container('maven') {
+          sh 'mvn -version'
         }
       }
     }
