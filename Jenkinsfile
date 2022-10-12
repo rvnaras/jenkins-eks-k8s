@@ -6,8 +6,10 @@ pipeline {
         kind: Pod
         spec:
           containers:
-          - name: ubuntu
-            image: ubuntu:latest
+          - name: docker
+            image: docker:latest
+	    securityContext:
+              allowPrivilegeEscalation: true
             command:
             - cat
             tty: true
@@ -24,11 +26,11 @@ pipeline {
         sh 'echo skipped'
       }
     }
-	stage('test docker') {
-	  steps {
-	    script {
-		  dockerImage = docker.build registry + ":$BUILD_NUMBER"
-		  }
+    stage('test docker') {
+      steps {
+        script {
+	  dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        }
 	  }
 	}
   }
