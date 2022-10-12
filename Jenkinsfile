@@ -18,7 +18,7 @@ pipeline {
     stage('Run ubuntu') {
       steps {
         container('ubuntu') {
-          sh 'lsb_release -a'
+          sh 'echo Done'
         }
       }
     }
