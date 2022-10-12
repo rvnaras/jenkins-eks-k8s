@@ -16,16 +16,20 @@ pipeline {
   }
   environment{
     DOCKERHUB_CREDENTIALS=credentials('dockerhub')
+    registry = "ravennaras/cilist"
   }
   stages {
-    
-    stage('deploy to k8s') {
+    stage('clone') {
+      steps {
+        git 'https://github.com/rvnaras/jenkins-eks-k8s.git'
+      }
+    }
+    stage('test docker') {
       steps {
         script {
-          kubernetesDeploy(configs: "backend.yaml", kubeconfigId: "k8s")
-	      kubernetesDeploy(configs: "frontend.yaml", kubeconfigId: "k8s")
-        }
-      }
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
+	}
+      } 
     }
   }
 }
