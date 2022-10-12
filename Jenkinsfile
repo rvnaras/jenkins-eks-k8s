@@ -14,12 +14,19 @@ pipeline {
         '''
     }
   }
+  environment{
+    DOCKERHUB_CREDENTIALS=credentials('dockerhub')
+  }
   stages {
-    stage('Run ubuntu') {
+    stage('cloning repo') {
       steps {
         container('ubuntu') {
-          sh 'echo Done'
+          sh 'sudo apt update -y && sudo apt upgrade -y'
+		      sh 'sudo apt install docker.io'
+		      sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+		      sh 'git clone https://github.com/rvnaras/jenkins-eks-k8s.git'
         }
+		  git 'https://github.com/rvnaras/jenkins-eks-k8s.git'
       }
     }
   }
