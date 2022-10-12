@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . /app
 
-RUN apt update && apt install nano -y
+RUN apt update -y
 
 RUN npm install
 
