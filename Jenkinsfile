@@ -21,7 +21,7 @@ pipeline {
   stages {
     stage('clone') {
       steps {
-        git 'https://github.com/rvnaras/jenkins-eks-k8s.git'
+        sh 'echo skipped"
       }
     }
     stage('test docker') {
