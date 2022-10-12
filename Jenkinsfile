@@ -22,7 +22,7 @@ pipeline {
       steps {
         container('ubuntu') {
           sh 'apt update -y && apt upgrade -y'
-          sh 'apt install docker.io'
+          sh 'apt install docker.io -y'
 	  sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
 	  sh 'git clone https://github.com/rvnaras/jenkins-eks-k8s.git'
         }
