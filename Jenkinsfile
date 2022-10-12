@@ -1,38 +1,45 @@
 pipeline {
-  agent {
-    kubernetes {
-      yaml '''
-        apiVersion: v1
-        kind: Pod
-        spec:
-          containers:
-          - name: ubuntu
-            image: ubuntu:latest
-            command:
-            - cat
-            tty: true
-        '''
-    }
+
+  environment {
+    dockerimagename = "thetips4you/nodeapp"
+    dockerImage = ""
   }
-  environment{
-    DOCKERHUB_CREDENTIALS=credentials('dockerhub')
-  }
+
+  agent any
+
   stages {
-    stage('cloning repo') {
+
+    stage('Checkout Source') {
       steps {
-        container('ubuntu') {
-          sh 'apt update -y && apt upgrade -y'
-          sh 'apt install docker.io -y'
-	  sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-	  sh 'git clone https://github.com/rvnaras/jenkins-eks-k8s.git'
+        git 'https://github.com/shazforiot/nodeapp_test.git'
+      }
+    }
+
+    stage('Build image') {
+      steps{
+        script {
+          dockerImage = docker.build dockerimagename
         }
       }
     }
-    stage('deploy to k8s') {
+
+    stage('Pushing Image') {
+      environment {
+               registryCredential = 'dockerhublogin'
+           }
+      steps{
+        script {
+          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
+            dockerImage.push("latest")
+          }
+        }
+      }
+    }
+
+    stage('Deploying App to Kubernetes') {
       steps {
         script {
-          kubernetesDeploy(configs: "backend.yaml")
-	  kubernetesDeploy(configs: "frontend.yaml")
+          kubernetesDeploy(configs: "deploymentservice.yml", kubeconfigId: "kubernetes")
         }
       }
     }
