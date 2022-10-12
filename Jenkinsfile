@@ -28,5 +28,14 @@ pipeline {
         }
       }
     }
+    stage('build and push docker image backend') {
+      steps {
+        container('ubuntu') {
+          sh 'cd jenkins-eks-k8s'
+          sh 'docker image build -f backend/Dockerfile.be -t ravennaras/cilist:dbjenkins .'
+	  sh 'docker image push ravennaras/cilist:dbjenkins'
+        }
+      }
+    }
   }
 }
