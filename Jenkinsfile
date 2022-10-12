@@ -26,9 +26,7 @@ pipeline {
     }
     stage('test docker') {
       steps {
-        script {
-          dockerImage = docker.build registry + ":$BUILD_NUMBER"
-	}
+        sh 'kubectl apply -f backend.yaml'
       } 
     }
   }
