@@ -9,6 +9,11 @@ pipeline {
 
   stages {
 
+    stage('initilize'){
+      def dockerHome = tool 'docker'
+      env.PATH = "${dockerHome}/bin:${env.PATH}"
+    }
+    
     stage('Checkout Source') {
       steps {
         git 'https://github.com/shazforiot/nodeapp_test.git'
