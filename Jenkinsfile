@@ -30,12 +30,11 @@ pipeline {
         }
       }
     }
-    stage('build and push docker image backend') {
+    stage('deploy to k8s') {
       steps {
-        container('ubuntu') {
-          sh 'cd jenkins-eks-k8s'
-          sh 'docker image build -f backend/Dockerfile.be -t ravennaras/cilist:dbjenkins .'
-	  sh 'docker image push ravennaras/cilist:dbjenkins'
+        script {
+          kubernetesDeploy(configs: "backend.yaml")
+	  kubernetesDeploy(configs: "frontend.yaml")
         }
       }
     }
