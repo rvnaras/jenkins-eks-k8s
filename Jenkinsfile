@@ -9,7 +9,7 @@ pipeline {
           - name: docker
             image: docker:latest
 	    securityContext:
-              allowPrivilegeEscalation: true
+	      allowPrivilegeEscalation: true
             command:
             - cat
             tty: true
