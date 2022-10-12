@@ -52,5 +52,10 @@ pipeline {
         sh 'echo login'
       }
     }
+    stage('deploy to k8s cluster!!') {
+      steps {
+        sh 'echo deploy!'
+      }
+    }
   }
 }
