@@ -28,15 +28,28 @@ pipeline {
     registry = "ravennaras/cilist"
   }
   stages {
-    stage('build docker image') {
+    stage('login to dockerhub') {
       steps {
         container('docker') {
             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-            sh 'docker build -f ./backend/Dockerfile.be -t ravennaras/cilist:bejenkins . '
-            sh 'docker push ravennaras/cilist:bejenkins'
-            sh 'docker build -f ./frontend/Dockerfile.fe -t ravennaras/cilist:fejenkins . '
-            sh 'docker push ravennaras/cilist:fejenkins'
         }
+      }
+    }
+    stage('build and push docker image') {
+      steps {
+        container('docker') {
+            sh '''
+              docker build -f ./backend/Dockerfile.be -t ravennaras/cilist:bejenkins . 
+              docker push ravennaras/cilist:bejenkins
+              docker build -f ./frontend/Dockerfile.fe -t ravennaras/cilist:fejenkins . 
+              docker push ravennaras/cilist:fejenkins
+            '''
+        }
+      }
+    }
+    stage('login to aws cluster') {
+      steps {
+        sh 'aws --version'
       }
     }
   }
