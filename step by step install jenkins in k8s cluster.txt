@@ -4,6 +4,7 @@ cdREF!
 - https://docs.aws.amazon.com/eks/latest/userguide/managing-ebs-csi.html
 - https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html
 - https://plugins.jenkins.io/configuration-as-code/
+- https://www.youtube.com/watch?v=ZXaorni-icg
 
 tested work by musyaffadli, different environment may vary
 eks version 1.22
@@ -19,10 +20,10 @@ cni, coredns, kube-proxy, ebs-csi version default
 8. make sure its running
 9. get admin password, jsonpath="{.data.jenkins-admin-password}", kubectl get secret -n jenkins jenkins -o jsonpath=$jsonpath
 10. get url jenkins
-11. decode base64 with echo -n 'XXX' | base64 --decode, be careful to not copy base64 text, usually admin default password is aXoHBSrw1zkQWz6laylzWc
+11. decode base64 with echo -n 'XXX' | base64 --decode, be careful to not copy base64 text
 12. kubectl -n jenkins port-forward <pod_name> 8080:8080 if service is set to ClusterIP
 13. get load balancer dns if set service to LoadBalancer
-14. install plugin github, docker, docker pipeline
+14. install plugin github, docker, docker plugin, docker pipeline, kubernetes-cd
 15. add webhook to load balancer dns add with /github-webhook/ in url 
 16. verify webhook connection
 17. install ingress controller first
