@@ -49,7 +49,11 @@ pipeline {
     }
     stage('login to aws cluster') {
       steps {
-        sh 'echo login'
+        withAWS(credentials: 'aws', region: 'us-east-1'){
+          sh '''
+            aws ec2 describe-instances
+          '''
+        }
       }
     }
     stage('deploy to k8s cluster') {
