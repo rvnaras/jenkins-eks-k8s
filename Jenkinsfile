@@ -39,9 +39,9 @@ pipeline {
       steps {
         container('docker') {
             sh '''
-              docker build -f ./backend/Dockerfile.be -t ravennaras/cilist:bejenkins . 
+              docker build -f ./backend/Dockerfile.be -t ravennaras/cilist:bejenkins . --network host 
               docker push ravennaras/cilist:bejenkins
-              docker build -f ./frontend/Dockerfile.fe -t ravennaras/cilist:fejenkins . 
+              docker build -f ./frontend/Dockerfile.fe -t ravennaras/cilist:fejenkins . --network host
               docker push ravennaras/cilist:fejenkins
             '''
         }
