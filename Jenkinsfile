@@ -49,7 +49,7 @@ pipeline {
     }
     stage('login to aws cluster') {
       steps {
-        withAWS(credentials: 'aws', region: 'us-east-1'){
+        withAWS(credentials: 'aws'){
           sh '''
             echo login successfull
           '''
