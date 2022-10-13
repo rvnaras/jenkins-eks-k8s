@@ -6,7 +6,7 @@ pipeline {
         kind: Pod
         spec:
           containers:
-          - name: docker
+          - name: pods
             image: docker:dind
             securityContext:
               allowPrivilegeEscalation: true
@@ -30,14 +30,14 @@ pipeline {
   stages {
     stage('login to dockerhub') {
       steps {
-        container('docker') {
+        container('pods') {
             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
         }
       }
     }
     stage('build and push docker image') {
       steps {
-        container('docker') {
+        container('pods') {
             sh '''
               docker build -f ./backend/Dockerfile.be -t ravennaras/cilist:bejenkins . --network host 
               docker push ravennaras/cilist:bejenkins
@@ -49,16 +49,22 @@ pipeline {
     }
     stage('login to aws cluster') {
       steps {
-        withAWS(credentials: 'aws'){
-          sh '''
-            echo login successfull
-          '''
+        container('pods'){
+          withAWS(credentials: 'aws'){
+            sh '''
+              apt get update -y
+            '''
+          }
         }
       }
     }
     stage('deploy to k8s cluster') {
       steps {
-        sh 'echo deploy!'
+        container('pods'){
+          sh '''
+            echo deploy
+          '''
+        }
       }
     }
   }
