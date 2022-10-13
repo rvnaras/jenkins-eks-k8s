@@ -58,7 +58,7 @@ pipeline {
     }
     stage('deploy to k8s cluster') {
       steps {
-        sh 'echo deploy'
+        sh 'echo deploy!'
       }
     }
   }
