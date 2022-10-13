@@ -51,7 +51,7 @@ pipeline {
       steps {
         withAWS(credentials: 'aws', region: 'us-east-1'){
           sh '''
-            aws ec2 describe-instances
+            echo login successfull
           '''
         }
       }
