@@ -57,7 +57,7 @@ pipeline {
         container('pods'){
           withAWS(credentials: 'aws'){
             sh '''
-              apt get update -y
+              apt update -y
             '''
           }
         }
