@@ -6,7 +6,7 @@ pipeline {
         kind: Pod
         spec:
           containers:
-          - name: pods
+          - name: docker
             image: docker:dind
             securityContext:
               allowPrivilegeEscalation: true
@@ -16,6 +16,11 @@ pipeline {
             volumeMounts:
             - name: dockersock
               mountPath: 'var/run/docker.sock'
+          - name: pods
+            image: ubuntu:latest
+            securityContext:
+              allowPrivilegeEscalation: true
+            tty: true
           volumes:
           - name: dockersock
             hostPath:
@@ -30,14 +35,14 @@ pipeline {
   stages {
     stage('login to dockerhub') {
       steps {
-        container('pods') {
+        container('docker') {
             sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
         }
       }
     }
     stage('build and push docker image') {
       steps {
-        container('pods') {
+        container('docker') {
             sh '''
               docker build -f ./backend/Dockerfile.be -t ravennaras/cilist:bejenkins . --network host 
               docker push ravennaras/cilist:bejenkins
