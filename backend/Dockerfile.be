@@ -4,9 +4,9 @@ WORKDIR /app
 
 COPY ./backend/ /app
 
-#RUN apt update && apt install nano -y
+RUN apt update && apt install nano -y
 
-#RUN npm install
+RUN npm install
 
 EXPOSE 5000
 
