@@ -1,59 +1,78 @@
 pipeline {
-    agent {
-        kubernetes { 
-	  yaml '''
-	    apiVersion: v1
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
         kind: Pod
         spec:
           containers:
-          - name: ubuntu
-            image: ubuntu:latest
+          - name: docker
+            image: docker:dind
+            securityContext:
+              allowPrivilegeEscalation: true
             command:
             - cat
             tty: true
-		'''
-	    }
-          }
- environment {
-   DOCKERHUB_CREDENTIALS=credentials('dockerhub')
- }
-
-stages {
-   stage('cloning repo') {
-     steps {
-	   container('ubuntu'){
-             sh 'sudo apt update -y && sudo apt upgrade -y'
-             sh 'sudo apt install docker.io'
-	     sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-	     sh 'git clone https://github.com/rvnaras/jenkins-eks-k8s.git'
-	   }
-	   git 'https://github.com/rvnaras/jenkins-eks-k8s.git'
-	 }
-   }
- 
-   stage('build and push docker image backend') {
-     steps {
-	   container('ubuntu'){
-             sh 'sudo docker image build -f backend/Dockerfile.be -t ravennaras/cilist:dbjenkins .'
-	     sh 'sudo docker image push ravennaras/cilist:dbjenkins'
-	   }
-     }
-   }
-   
-   stage('build and push docker image frontend') {
-     steps {
-	   container('ubuntu'){
-             sh 'sudo docker image build -f frontend/Dockerfile.fe -t ravennaras/cilist:fejenkins .'
-	     sh 'sudo docker image push ravennaras/cilist:fejenkins'
-	   }
-     }
-   }
-
-   stage('deploying app to kubernetes cluster') {
+            volumeMounts:
+            - name: dockersock
+              mountPath: 'var/run/docker.sock'
+          - name: pods
+            image: ubuntu:latest
+            securityContext:
+              allowPrivilegeEscalation: true
+            tty: true
+          volumes:
+          - name: dockersock
+            hostPath:
+              path: /var/run/docker.sock
+        '''
+    }
+  }
+  environment{
+    DOCKERHUB_CREDENTIALS=credentials('docker')
+    registry = "ravennaras/cilist"
+  }
+  stages {
+    stage('login to dockerhub') {
       steps {
-        script {
-            kubernetesDeploy(configs: "backend.yaml")
-            kubernetesDeploy(configs: "frontend.yaml")
+        container('docker') {
+            sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+        }
+      }
+    }
+    stage('build and push docker image') {
+      steps {
+        container('docker') {
+            sh '''
+              docker build -f ./backend/Dockerfile.be -t ravennaras/cilist:bejenkins . --network host 
+              docker push ravennaras/cilist:bejenkins
+              docker build -f ./frontend/Dockerfile.fe -t ravennaras/cilist:fejenkins . --network host
+              docker push ravennaras/cilist:fejenkins
+            '''
+        }
+      }
+    }
+    stage('login to aws cluster') {
+      steps {
+        container('pods'){
+          withAWS(credentials: 'aws'){
+            sh '''
+              apt update -y
+              aws configure set default.region us-east-1 && aws configure set aws_access_key_id $YOURSACCESSKEY && aws configure set aws_secret_access_key $YOUR_SECRET_KEY
+              aws eks update-kubeconfig --name=cilsy-eks
+              echo login successful
+            '''
+          }
+        }
+      }
+    }
+    stage('deploy to k8s cluster') {
+      steps {
+        container('pods'){
+          sh '''
+            kubectl apply -f backend.yaml
+            kubectl apply -f frontend.yaml
+          '''
         }
       }
     }
