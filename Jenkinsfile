@@ -58,9 +58,8 @@ pipeline {
           withAWS(credentials: 'aws'){
             sh '''
               apt update -y
-              aws configure set default.region us-east-1 && aws configure set aws_access_key_id $YOURSACCESSKEY && aws configure set aws_secret_access_key $YOUR_SECRET_KEY
-              aws eks update-kubeconfig --name=cilsy-eks
-              echo login successful
+              echo $AWS_ACCESS_KEY_ID
+              echo $AWS_SECRET_ACCESS_KEY
             '''
           }
         }
@@ -70,8 +69,7 @@ pipeline {
       steps {
         container('pods'){
           sh '''
-            kubectl apply -f backend.yaml
-            kubectl apply -f frontend.yaml
+            echo deploy
           '''
         }
       }
