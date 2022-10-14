@@ -17,7 +17,7 @@ pipeline {
             - name: dockersock
               mountPath: 'var/run/docker.sock'
           - name: pods
-            image: ubuntu:latest
+            image: ravennaras/template:eksctl
             securityContext:
               allowPrivilegeEscalation: true
             tty: true
