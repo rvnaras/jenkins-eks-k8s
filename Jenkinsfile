@@ -48,8 +48,8 @@ pipeline {
       steps {
         container('docker') {
             sh '''
-              docker run aquasec/trivy image ravennaras/cilist:bejenkins --net=host
-              docker run aquasec/trivy image ravennaras/cilist:fejenkins --net=host
+              docker run --network host aquasec/trivy image ravennaras/cilist:bejenkins 
+              docker run --network host aquasec/trivy image ravennaras/cilist:fejenkins 
               docker push ravennaras/cilist:bejenkins
               docker push ravennaras/cilist:fejenkins
             '''
