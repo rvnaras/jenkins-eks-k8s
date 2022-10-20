@@ -71,9 +71,9 @@ pipeline {
               aws eks update-kubeconfig --name=cilsy-eks
               echo aws login successful
               argocd login $ARGOCD_URL --username $ARGOCD_CREDENTIALS_USR --password $ARGOCD_CREDENTIALS_PSW --insecure
-			  echo argocd login successful
-			  argocd app get $APPLICATION
-			  argocd app sync $APPLICATION
+	      echo argocd login successful
+	      argocd app get $APPLICATION
+	      argocd app sync $APPLICATION
             '''
           }
         }
