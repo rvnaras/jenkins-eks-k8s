@@ -30,9 +30,9 @@ pipeline {
   }
   environment{
     DOCKERHUB_CREDENTIALS=credentials('docker')
-	ARGOCD_CREDENTIALS=credentials('argocd')
-	ARGOCD_URL=credentials('argocd-url')
-	APPLICATION=credentials('application')
+    ARGOCD_CREDENTIALS=credentials('argocd')
+    ARGOCD_URL=credentials('argocd-url')
+    APPLICATION=credentials('application')
     registry = "ravennaras/cilist"
   }
   stages {
