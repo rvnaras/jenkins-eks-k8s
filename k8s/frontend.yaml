@@ -35,7 +35,7 @@ metadata:
   name: cilist-fe
   namespace: devops-musyaffadli
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: cilist
