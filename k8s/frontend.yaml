@@ -6,7 +6,7 @@ metadata:
 data:
     #REACT_APP_BACKEND_URL: "cilist-be-svc.devops-musyaffadli.svc.cluster.local:5000"
     #REACT_APP_BACKEND_URL: "cilist-be-svc:5000"
-    REACT_APP_BACKEND_URL: "aeb35572355dd46c791f73fc33154b6c-83628553569f5bf5.elb.us-east-1.amazonaws.com/be" 
+    REACT_APP_BACKEND_URL: "ae163161bc875483aba1616828a46c78-21da8f3f93bdd9db.elb.us-east-1.amazonaws.com/be" 
 ---
 apiVersion: v1
 kind: Service
@@ -79,7 +79,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: aeb35572355dd46c791f73fc33154b6c-83628553569f5bf5.elb.us-east-1.amazonaws.com
+    - host: ae163161bc875483aba1616828a46c78-21da8f3f93bdd9db.elb.us-east-1.amazonaws.com
       http:
         paths:
         - path: /
