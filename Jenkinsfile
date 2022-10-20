@@ -17,7 +17,7 @@ pipeline {
             - name: dockersock
               mountPath: 'var/run/docker.sock'
           - name: pods
-            image: ravennaras/template:eksctl-argo-v1
+            image: ravennaras/template:eksctl
             securityContext:
               allowPrivilegeEscalation: true
             tty: true
@@ -30,9 +30,6 @@ pipeline {
   }
   environment{
     DOCKERHUB_CREDENTIALS=credentials('docker')
-    ARGOCD_CREDENTIALS=credentials('argocd')
-    ARGOCD_URL=credentials('argocd-url')
-    APPLICATION=credentials('application')
     registry = "ravennaras/cilist"
   }
   stages {
@@ -69,11 +66,9 @@ pipeline {
               echo 'deploy to cluster'
               aws configure set default.region us-east-1 && aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
               aws eks update-kubeconfig --name=cilsy-eks
-              echo aws login successful
-              argocd login $ARGOCD_URL --username $ARGOCD_CREDENTIALS_USR --password $ARGOCD_CREDENTIALS_PSW --insecure
-	      echo argocd login successful
-	      argocd app get $APPLICATION
-	      argocd app sync $APPLICATION
+              echo login successful
+              kubectl apply -f backend.yaml
+              kubectl apply -f frontend.yaml
             '''
           }
         }
