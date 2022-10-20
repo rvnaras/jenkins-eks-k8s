@@ -30,6 +30,8 @@ pipeline {
   }
   environment{
     DOCKERHUB_CREDENTIALS=credentials('docker')
+    ARGOCD_CREDENTIALS=credentials('argocd')
+    ARGOCD_URL=credentials('argocd-url')
     registry = "ravennaras/cilist"
   }
   stages {
@@ -67,8 +69,10 @@ pipeline {
               aws configure set default.region us-east-1 && aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
               aws eks update-kubeconfig --name=cilsy-eks
               echo login successful
-              kubectl apply -f backend.yaml
-              kubectl apply -f frontend.yaml
+              argocd login $ARGOCD_URL --username $ARGOCD_CREDENTIALS_USR --password $ARGOCD_CREDENTIALS_PSW --insecure
+			        echo argocd login successful
+			        argocd app get jenkins-eks-k8s
+			        argocd app sync jenkins-eks-k8s
             '''
           }
         }
